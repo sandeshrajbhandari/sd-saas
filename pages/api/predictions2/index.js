@@ -1,6 +1,12 @@
 const API_HOST = process.env.REPLICATE_API_HOST || "https://api.replicate.com";
 const addBackgroundToPNG = require("lib/add-background-to-png");
 
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+
+import { unstable_getServerSession, getServerSession } from "next-auth/next";
+import authOptions from "pages/api/auth/[...nextauth]";
+
 export default async function handler(req, res) {
   // remnove null and undefined values
   req.body = Object.entries(req.body).reduce(
@@ -15,7 +21,8 @@ export default async function handler(req, res) {
   const body = JSON.stringify({
     // Pinned to a specific version of Stable Diffusion, fetched from:
     // https://replicate.com/stability-ai/stable-diffusion
-    version: "535b677d1fb4d20f3947a2c82e866d4fb6a9b41438c490509531951c89f75534",
+    // stability-ai/stable-diffusion:ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4
+    version: "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
     // be04660a5b93ef2aff61e3668dedb4cbeb14941e62a3fd5998364a32d613e35e //this is the inpainter replicate model.
     input: req.body,
   });
@@ -34,6 +41,32 @@ export default async function handler(req, res) {
     res.statusCode = 500;
     res.end(JSON.stringify({ detail: error.detail }));
     return;
+  }
+
+  const session = await unstable_getServerSession(req, res, authOptions);
+  try {
+    // Query the user in the database using the email
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userId = user.id;
+
+    // Now you have the user ID (userId) corresponding to the email
+    console.log("User ID:", userId);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  } finally {
+    // Close the Prisma connection
+
+    await prisma.$disconnect();
   }
 
   const prediction = await response.json();

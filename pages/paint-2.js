@@ -5,10 +5,13 @@ import Canvas from "components/canvas";
 import PromptForm from "components/prompt-form";
 import Dropzone from "components/dropzone";
 import Download from "components/download";
+import Gallery from "components/gallery";
 // icons from lucide-react
 import { XCircle as StartOverIcon } from "lucide-react";
 import { Code as CodeIcon } from "lucide-react";
 import { Rocket as RocketIcon } from "lucide-react";
+
+import { addGeneration } from "lib/addGeneration";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -18,6 +21,11 @@ export default function Home() {
   const [maskImage, setMaskImage] = useState(null);
   const [userUploadedImage, setUserUploadedImage] = useState(null);
 
+  const testClick = async (e) => {
+    e.preventDefault();
+    const prediction = "test";
+    await addGeneration(prediction);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -30,8 +38,10 @@ export default function Home() {
       prompt: e.target.prompt.value,
       negative_prompt: e.target.negative_prompt.value,
     };
-
-    const response = await fetch("/api/predictions", {
+    // first the request is sent and a response with an id is sent back.
+    // later we check for the prediction.status, and use the id to get the image if the prediction suceeds or fails.
+    // PINGING THE predictons2 endpoint.
+    const response = await fetch("/api/predictions2", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,18 +49,21 @@ export default function Home() {
       body: JSON.stringify(body),
     });
     const prediction = await response.json();
-
+    // check 201 response error.
     if (response.status !== 201) {
       setError(prediction.detail);
       return;
     }
     console.log("setting predictions");
+    // adding the new prediction to the predictions state array.
     setPredictions(predictions.concat([prediction]));
     console.log(predictions);
+    // in this stage we check if the prediction has completed.
     while (
       prediction.status !== "succeeded" &&
       prediction.status !== "failed"
     ) {
+      console.log("waiting 1 sec.");
       await sleep(1000);
       const response = await fetch("/api/predictions/" + prediction.id);
       prediction = await response.json();
@@ -61,8 +74,10 @@ export default function Home() {
       setPredictions(predictions.concat([prediction]));
 
       if (prediction.status === "succeeded") {
-        //also add the successful imageGenerations to database
-
+        console.log(
+          "Adding prediction to the generationImages database.${JSON.stringify(prediction)}"
+        );
+        await addGeneration(prediction);
         setUserUploadedImage(null);
       }
     }
@@ -85,24 +100,30 @@ export default function Home() {
 
       <main className="container mx-auto p-5">
         {error && <div>{error}</div>}
+
         {/* commenting out uploader and canvas part */}
         <div className="border-hairline max-w-[512px] mx-auto relative">
-          <div>what is this? {predictions[0]}</div>
+          {/* <div>what is this? {predictions[0]}</div> */}
           <Dropzone
             onImageDropped={setUserUploadedImage}
             predictions={predictions}
             userUploadedImage={userUploadedImage}
           />
-          {/* <div
+          <div
             className="bg-gray-50 relative max-h-[512px] w-full flex items-stretch"
             // style={{ height: 0, paddingBottom: "100%" }}
           >
-            <Canvas
+            {/* <Canvas
               predictions={predictions}
               userUploadedImage={userUploadedImage}
               onDraw={setMaskImage}
+            /> */}
+            <Gallery
+              predictions={predictions}
+              // userUploadedImage={userUploadedImage}
+              // onDraw={setMaskImage}
             />
-          </div> */}
+          </div>
         </div>
 
         <div className="max-w-[512px] mx-auto">
@@ -139,6 +160,7 @@ export default function Home() {
           </div>
         </div>
       </main>
+      <button onClick={testClick}>Test USER DATABASE</button>
     </div>
   );
 }

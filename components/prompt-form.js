@@ -10,6 +10,7 @@ const samplePrompts = [
   "pencil sketch of robots playing poker",
   "photo of an astronaut riding a horse",
 ];
+
 import sample from "lodash/sample";
 
 export default function PromptForm(props) {
@@ -27,6 +28,12 @@ export default function PromptForm(props) {
           defaultValue={prompt}
           name="prompt"
           placeholder="Enter a prompt..."
+          className="block w-full flex-grow rounded-l-md"
+        />
+        <input
+          type="text"
+          name="negative_prompt"
+          placeholder="Enter a negative prompt..."
           className="block w-full flex-grow rounded-l-md"
         />
 
