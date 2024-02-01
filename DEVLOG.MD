@@ -1,0 +1,1 @@
+- make working login to generate images.
