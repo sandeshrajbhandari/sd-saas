@@ -65,8 +65,11 @@ export default function Home() {
     ) {
       console.log("waiting 1 sec.");
       await sleep(1000);
+      // fetching the /api/predictions/[id] endpoint.
+      // it gives the prediction data including its status (failed, succeeded, in-progress)
       const response = await fetch("/api/predictions/" + prediction.id);
       prediction = await response.json();
+      // check for error status code i.e. 200.
       if (response.status !== 200) {
         setError(prediction.detail);
         return;
@@ -77,6 +80,7 @@ export default function Home() {
         console.log(
           "Adding prediction to the generationImages database.${JSON.stringify(prediction)}"
         );
+        // addGeneration calls the endpoint usertest rn to add the prediction to user database.
         await addGeneration(prediction);
         setUserUploadedImage(null);
       }

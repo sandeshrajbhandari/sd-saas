@@ -28,6 +28,17 @@ export default async function handler(req, res) {
 
     // Now you have the user ID (userId) corresponding to the email
     console.log("User ID:", userId);
+    // now create a new entry to ImageGeneration table.
+    // it has id, user_id, imageLink, prompt.
+    const createImageGeneration = await prisma.imageGeneration.create({
+      data: {
+        userId: userId,
+        predictionID: req.body.prediction.id,
+        imageLink: req.body.prediction.output[0],
+        prompt: req.body.prediction.input.prompt,
+      },
+    });
+    console.log(`created imageGeneration entry. ${createImageGeneration}`);
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, error: "Internal Server Error" });
@@ -36,6 +47,7 @@ export default async function handler(req, res) {
 
     await prisma.$disconnect();
   }
-
-  //   res.end(session.user.name, req.body);
+  const outputJSON = { ...req.body, userName: session.user.name };
+  console.log(outputJSON);
+  res.end(JSON.stringify(outputJSON));
 }
