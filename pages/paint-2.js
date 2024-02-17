@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
 import Canvas from "components/canvas";
@@ -13,6 +14,8 @@ import { Rocket as RocketIcon } from "lucide-react";
 
 import { addGeneration } from "lib/addGeneration";
 
+import { useSession, signIn, signOut } from "next-auth/react";
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export default function Home() {
@@ -20,6 +23,18 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [maskImage, setMaskImage] = useState(null);
   const [userUploadedImage, setUserUploadedImage] = useState(null);
+
+  // session check process.
+  const { data: session, status } = useSession();
+  const isLoading = status === "loading";
+  const router = useRouter();
+  useEffect(() => {
+    // Redirect to login if there's no session
+    if (isLoading) return; // Do nothing while loading
+    if (status == "unauthenticated") {
+      router.push("/login"); // Update '/login' with the actual login page URL
+    }
+  }, [session, router]);
 
   const testClick = async (e) => {
     e.preventDefault();
@@ -95,6 +110,7 @@ export default function Home() {
     setUserUploadedImage(null);
   };
 
+  if (isLoading) return "checking session. loading.";
   return (
     <div>
       <Head>
