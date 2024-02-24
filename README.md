@@ -24,7 +24,6 @@ Prerequisites:
 1. Recent version of Node.js
 2. [Replicate API token](https://replicate.com/account)
 
-
 Set your Replicate API token in your environment:
 
 ```

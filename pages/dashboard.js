@@ -29,7 +29,11 @@ export default function Dashboard({ imageGenerations }) {
       <div className="max-w-4xl m-auto w-full px-4">
         <div className="flex flex-col">
           <p className="text-2xl font-medium ">
-            Welcome, {session?.user?.name}
+            Welcome, {session?.user?.name}{" "}
+            <img
+              className="rounded-full border-2 inline-block"
+              src={session?.user?.image}
+            />
             {/* {JSON.stringify(session)} */}
           </p>
         </div>
@@ -42,7 +46,7 @@ export default function Dashboard({ imageGenerations }) {
         {imageGenerations.map((imageGen, i) => (
           <div
             key={i}
-            className="max-w-md w-1/4 mx-4 my-8 p-6 bg-white rounded-lg shadow-md"
+            className="max-w-md w-2/12 mx-4 my-8 p-2 bg-white rounded-lg shadow-md"
           >
             <h1 className="text-xl font-semibold mb-4">{i}</h1>
             <img
@@ -91,5 +95,3 @@ export const getServerSideProps = async () => {
 //     },
 //   };
 // }
-
-// write a simple loop

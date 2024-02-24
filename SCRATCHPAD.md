@@ -1,0 +1,29 @@
+## predictions json output sample
+
+```json
+{
+  "id": "jdyqgpzbly5a3ahyg3xyjjwfmu",
+  "model": "stability-ai/stable-diffusion",
+  "version": "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
+  "input": {
+    "negative_prompt": "",
+    "prompt": "flower field drawn by Jean-Jacques Sempé"
+  },
+  "logs": "Using seed: 5558\n 0%| | 0/50 [00:00<?, ?it/s]\n 6%|▌ | 3/50 [00:00<00:02, 23.25it/s]\n 12%|█▏ | 6/50 [00:00<00:01, 22.93it/s]\n 18%|█▊ | 9/50 [00:00<00:01, 23.07it/s]\n 24%|██▍ | 12/50 [00:00<00:01, 23.14it/s]\n 30%|███ | 15/50 [00:00<00:01, 23.18it/s]\n 36%|███▌ | 18/50 [00:00<00:01, 23.21it/s]\n 42%|████▏ | 21/50 [00:00<00:01, 23.23it/s]\n 48%|████▊ | 24/50 [00:01<00:01, 23.22it/s]\n 54%|█████▍ | 27/50 [00:01<00:00, 23.24it/s]\n 60%|██████ | 30/50 [00:01<00:00, 22.87it/s]\n 66%|██████▌ | 33/50 [00:01<00:00, 22.99it/s]\n 72%|███████▏ | 36/50 [00:01<00:00, 23.09it/s]\n 78%|███████▊ | 39/50 [00:01<00:00, 23.16it/s]\n 84%|████████▍ | 42/50 [00:01<00:00, 23.20it/s]\n 90%|█████████ | 45/50 [00:01<00:00, 23.19it/s]\n 96%|█████████▌| 48/50 [00:02<00:00, 23.21it/s]\n100%|██████████| 50/50 [00:02<00:00, 23.15it/s]",
+  "output": [
+    "https://replicate.delivery/pbxt/0sFxrYZ1Pw7VER4ysi8PjyPfhyfLxpkltf47eAjYKnEJClcJB/out-0.png"
+  ],
+  "error": null,
+  "status": "succeeded",
+  "created_at": "2024-02-16T04:18:39.972867Z",
+  "started_at": "2024-02-16T04:18:39.983745Z",
+  "completed_at": "2024-02-16T04:18:42.816702Z",
+  "urls": {
+    "cancel": "https://api.replicate.com/v1/predictions/jdyqgpzbly5a3ahyg3xyjjwfmu/cancel",
+    "get": "https://api.replicate.com/v1/predictions/jdyqgpzbly5a3ahyg3xyjjwfmu"
+  },
+  "metrics": {
+    "predict_time": 2.832957
+  }
+}
+```
