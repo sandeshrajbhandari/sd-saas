@@ -11,9 +11,11 @@ import {
   hasSubscription,
   createCheckoutLink,
 } from "../../lib/billing";
+
+import { StripePricingTable } from "../../components/stripePricingTable";
 import { create } from "lodash";
 import prisma from "../api/db";
-
+import Header from "../../components/header";
 export const stripe = new Stripe(process.env.STRIPE_SECRET, {
   apiVersion: "2023-08-16",
 });
@@ -23,7 +25,7 @@ export default function StripeDashboard({ manage_link, hasSub, checkoutLink }) {
 
   return (
     <>
-      {/* <Header /> */}
+      <Header />
       <div className="max-w-4xl m-auto w-full px-4">
         <div className="flex flex-col">
           <h1>STRIPE DASHBOARD</h1>
@@ -58,6 +60,7 @@ export default function StripeDashboard({ manage_link, hasSub, checkoutLink }) {
               >
                 You have no subscription, checkout now!
               </Link>
+              <StripePricingTable />
             </div>
           </div>
         )}

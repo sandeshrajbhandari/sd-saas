@@ -1,5 +1,5 @@
 import { unstable_getServerSession, getServerSession } from "next-auth/next";
-import authOptions from "./api/auth/[...nextauth]";
+import { authOptions } from "./api/auth/[...nextauth]";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -61,9 +61,26 @@ export default function Dashboard({ imageGenerations }) {
     </>
   );
 }
-export const getServerSideProps = async () => {
+export async function getServerSideProps(context) {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  );
+  console.log(session);
   try {
-    const imageGenerations = await prisma.imageGeneration.findMany();
+    // const imageGenerations = await prisma.imageGeneration.findMany();
+    // change it so only images of the user are displayed, use session here.
+
+    const user = await prisma.user.findFirst({
+      where: { email: session?.user?.email },
+    });
+    console.log(user?.id);
+    const imageGenerations = await prisma.imageGeneration.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
 
     return {
       props: {
@@ -81,7 +98,7 @@ export const getServerSideProps = async () => {
   } finally {
     await prisma.$disconnect();
   }
-};
+}
 
 // export async function getServerSideProps() {
 //   // Fetch the user session using getServerSession
