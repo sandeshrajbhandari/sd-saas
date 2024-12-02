@@ -9,6 +9,7 @@ export default function Dropzone(props) {
     },
     [onImageDropped]
   );
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   if (props.predictions.length) return null;

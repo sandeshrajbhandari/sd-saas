@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Queue Prompt</title>
+  </head>
+  <body>
+    <h2>Prompt Text</h2>
+    <textarea id="promptTextArea" rows="10" cols="50">
+  {
+  "3": {
+    "inputs": {
+      "seed": 156680208700286,
+      "steps": 20,
+      "cfg": 8,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": [
+        "4",
+        0
+      ],
+      "positive": [
+        "6",
+        0
+      ],
+      "negative": [
+        "7",
+        0
+      ],
+      "latent_image": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "4": {
+    "inputs": {
+      "ckpt_name": "realisticVisionV60B1_v51VAE.ckpt"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "5": {
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
+    }
+  },
+  "6": {
+    "inputs": {
+      "text": "beautiful scenery nature glass bottle landscape, purple galaxy bottle,",
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "7": {
+    "inputs": {
+      "text": "text, watermark",
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "8": {
+    "inputs": {
+      "samples": [
+        "3",
+        0
+      ],
+      "vae": [
+        "4",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "9": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  }
+}
+
+</textarea
+    ><br />
+
+    <h2>KSampler Seed</h2>
+    <input type="number" id="seedInput" value="5" /><br />
+
+    <h2>Positive CLIP Text</h2>
+    <input
+      type="text"
+      id="clipTextInput"
+      value="masterpiece best quality man"
+    /><br />
+
+    <button onclick="queuePrompt()">Queue Prompt</button>
+
+    <script>
+      async function queuePrompt() {
+        var promptText = document.getElementById("promptTextArea").value.trim();
+        if (!promptText) {
+          alert("Please enter a prompt text.");
+          return;
+        }
+
+        var prompt = JSON.parse(promptText);
+
+        // Set the text prompt for the positive CLIPTextEncode
+        var clipText = document.getElementById("clipTextInput").value.trim();
+        prompt["6"]["inputs"]["text"] = clipText;
+
+        // Set the seed for the KSampler node
+        var seed = parseInt(document.getElementById("seedInput").value);
+        prompt["3"]["inputs"]["seed"] = seed;
+
+        console.log(JSON.stringify({ prompt: prompt }));
+
+        try {
+          const response = await fetch("http://127.0.0.1:8188/prompt", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt: prompt }),
+            mode: "no-cors", // Set no-cors mode7
+          });
+
+          if (response.ok) {
+            const responseData = await response.json();
+            console.log(responseData);
+          } else {
+            console.error("Failed to queue prompt:", response.status);
+          }
+        } catch (error) {
+          console.error("Error while queuing prompt:", error);
+        }
+      }
+    </script>
+  </body>
+</html>

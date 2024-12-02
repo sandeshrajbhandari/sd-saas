@@ -32,3 +32,7 @@
 - I have to update the product_id in billing.ts when i make the actual product in stripe dashboard.
 - i also want to implement a token system for image generations later.
 -
+
+## replicate comfyui update
+
+https://replicate.com/p/6gby2odbqkovylbkgxm7stjj2y
